@@ -29,14 +29,8 @@ import java.util.Arrays;
 import java.util.Collection;
 
 public class ApiExample {
-    private static final String CLIENT_SECRETS= "client_secret.json";
-    private static final Collection<String> SCOPES =
-            Arrays.asList("https://www.googleapis.com/auth/youtube.readonly");
-
-    private static final String APPLICATION_NAME = "API code samples";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String API_KEY = "";
-
 
     /**
      * Build and return an authorized API client service.

@@ -22,7 +22,6 @@ import java.util.TimeZone;
 
 class VideoService {
     public static void main(String args[]) {
-        System.out.println("Hello World");
         VideoService videoService = new VideoService();
         videoService.videoList();
     }
@@ -56,9 +55,6 @@ class VideoService {
 
             // https://mkyong.com/java8/java-8-difference-between-two-localdate-or-localdatetime/
             long daysAvailable = Duration.between(publishedAt.atStartOfDay(), now.atStartOfDay()).toDays();
-
-
-            System.out.println("---" + publishedAt + "," + now + "," + views + ", " + daysAvailable + ", ");
             video.put("monthlyViews", views * 365 / daysAvailable / 12);
         }
 
