@@ -62,7 +62,6 @@ class VideoService {
             video.put("monthlyViews", views * 365 / daysAvailable / 12);
         }
 
-        System.out.println(videoList.toString());
         writeFile("src/main/resources/videos-output.json", videoList.toString());
     }
 
