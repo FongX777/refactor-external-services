@@ -37,6 +37,12 @@ buildNumber.properties
 hs_err_pid*
 
 
+
+##############################
+## Eclipse
+##############################
+.settings/
+bin/
 tmp/
 .metadata
 .classpath
