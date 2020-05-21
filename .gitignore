@@ -12,6 +12,8 @@ buildNumber.properties
 **/*/client_secret.json
 **/*/api_key.txt
 
+# Generate Data
+**/*/**.output.**
 
 # Compiled class file
 *.class
