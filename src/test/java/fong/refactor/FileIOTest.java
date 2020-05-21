@@ -35,7 +35,6 @@ public class FileIOTest {
     }
 
 
-
     public static String readSystemResource(String resourceName) {
         String content = null;
         try {

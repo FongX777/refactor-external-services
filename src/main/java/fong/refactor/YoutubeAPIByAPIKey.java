@@ -11,7 +11,6 @@ import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeRequestInitializer;
 import com.google.api.services.youtube.model.VideoListResponse;
@@ -19,7 +18,7 @@ import com.google.api.services.youtube.model.VideoListResponse;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-public class YoutubeAPI {
+public class YoutubeAPIByAPIKey {
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     // Plz replace with your api key
     private static final String API_KEY = "";
@@ -41,9 +40,10 @@ public class YoutubeAPI {
 
     /**
      * You can use this to test your api token is correct or not
-     *
+     * <p>
      * Call function to create API service object. Define and
      * execute API request. Print API response.
+     *
      * @throws GeneralSecurityException, IOException, GoogleJsonResponseException
      */
     public static void _main(String[] args)
@@ -60,8 +60,7 @@ public class YoutubeAPI {
      * @param ids
      * @param parts
      * @return VideoListResponse
-     * @example
-     * ids: ["Ks-_Mh1QhMc,c0KYU2j0TM4,eIho2S0ZahI"]
+     * @example ids: ["Ks-_Mh1QhMc,c0KYU2j0TM4,eIho2S0ZahI"]
      */
     static public VideoListResponse requestVideoList(String[] ids, String parts[]) {
         YouTube youtubeService = null;

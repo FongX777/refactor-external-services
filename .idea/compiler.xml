@@ -6,7 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="refactor-remote-api" />
+        <module name="refactor-external-services" />
+        <module name="refactor_external_service" />
       </profile>
     </annotationProcessing>
   </component>

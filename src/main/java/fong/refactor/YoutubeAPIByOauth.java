@@ -31,7 +31,7 @@ import java.util.Collection;
  * https://developers.google.com/youtube/v3/docs/videos/list?hl=zh-tw&apix_params=%7B%22part%22%3A%22snippet%2CcontentDetails%2Cstatistics%22%2C%22id%22%3A%22Ks-_Mh1QhMc%2Cc0KYU2j0TM4%2CeIho2S0ZahI%22%7D&apix=true
  * https://developers.google.com/people/quickstart/java
  */
-public class OauthExample {
+public class YoutubeAPIByOauth {
     private static final Collection<String> SCOPES =
             Arrays.asList("https://www.googleapis.com/auth/youtube.readonly");
 
@@ -88,7 +88,7 @@ public class OauthExample {
 
     /**
      * You can use it to test your configuration.
-     *
+     * <p>
      * Call function to create API service object. Define and
      * execute API request. Print API response.
      *
