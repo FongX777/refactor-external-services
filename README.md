@@ -2,6 +2,9 @@
 
 This project implements Martin Fowler's blog post [Refactoring code that accesses external services](https://martinfowler.com/articles/refactoring-external-service.html) to serve as an exercise for the study group [ddd-tw/2020-legacycode-studygroup: Resources for the 2020 legacy code study group](https://github.com/ddd-tw/2020-legacycode-studygroup).
 
+![Photo by Federico Beccari on Unsplash](https://images.unsplash.com/photo-1454779132693-e5cd0a216ed3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1351&q=80)
+(Photo by Federico Beccari on Unsplash)
+
 
 ## Installation
 
