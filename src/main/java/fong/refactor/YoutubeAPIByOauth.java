@@ -16,7 +16,6 @@ import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.VideoListResponse;
 
@@ -24,7 +23,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,11 +32,15 @@ import java.util.Collection;
  * https://developers.google.com/people/quickstart/java
  */
 public class OauthExample {
-    private static final String CLIENT_SECRETS = "client_secret.json";
     private static final Collection<String> SCOPES =
             Arrays.asList("https://www.googleapis.com/auth/youtube.readonly");
 
-    private static final String APPLICATION_NAME = "Youtube API Demo"; // from google api setting
+    // Plz replace with your own secret file
+    private static final String CLIENT_SECRETS = "client_secret.json"; // credential downloaded from google api oauth page
+    // Plz replace with your own application name
+    private static final String APPLICATION_NAME = "Youtube API Demo"; // created from google api page
+    // Plz replace with your whitelisted redirect address port
+    private static final int ALLOWED_REDIRECT_ADDRESS_PORT = 62128;
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
     /**
@@ -49,6 +51,7 @@ public class OauthExample {
      */
     public static Credential authorize(final NetHttpTransport httpTransport) throws IOException {
         // Load client secrets.
+        // Fix:
         // https://stackoverflow.com/questions/793213/getting-the-inputstream-from-a-classpath-resource-xml-file
         InputStream in = ClassLoader.getSystemResourceAsStream(CLIENT_SECRETS);
         if (in == null) {
@@ -60,9 +63,12 @@ public class OauthExample {
         // Build flow and trigger user authorization request.
         GoogleAuthorizationCodeFlow flow =
                 new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
+                        .setAccessType("offline")
                         .build();
+        // Fix: redirect_uri_mismatch
+        // https://stackoverflow.com/questions/39263102/how-to-set-redirect-uri-for-oauth2-for-google-in-java
         Credential credential =
-                new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
+                new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver.Builder().setPort(ALLOWED_REDIRECT_ADDRESS_PORT).build()).authorize("user");
         return credential;
     }
 
@@ -81,12 +87,14 @@ public class OauthExample {
     }
 
     /**
+     * You can use it to test your configuration.
+     *
      * Call function to create API service object. Define and
      * execute API request. Print API response.
      *
      * @throws GeneralSecurityException, IOException, GoogleJsonResponseException
      */
-    public static void main(String[] args)
+    public static void _main(String[] args)
             throws GeneralSecurityException, IOException, GoogleJsonResponseException {
         YouTube youtubeService = getService();
         // Define and execute the API request
@@ -94,5 +102,22 @@ public class OauthExample {
                 .list("snippet,contentDetails,statistics");
         VideoListResponse response = request.setId("Ks-_Mh1QhMc,c0KYU2j0TM4,eIho2S0ZahI").execute();
         System.out.println(response);
+    }
+
+    static public VideoListResponse requestVideoList(String[] ids, String parts[]) {
+        YouTube youtubeService = null;
+        try {
+            youtubeService = getService();
+            // Define and execute the API request
+            YouTube.Videos.List request = youtubeService.videos()
+                    .list(String.join(",", parts));
+            VideoListResponse response = request.setId(String.join(",", ids)).execute();
+            return response;
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

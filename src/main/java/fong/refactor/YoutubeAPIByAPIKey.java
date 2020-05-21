@@ -6,9 +6,6 @@ package fong.refactor;
  * https://developers.google.com/explorer-help/guides/code_samples#java
  */
 
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -18,18 +15,13 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeRequestInitializer;
 import com.google.api.services.youtube.model.VideoListResponse;
-import com.google.auth.oauth2.AccessToken;
-import com.google.auth.oauth2.GoogleCredentials;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
-import java.util.Collection;
 
-public class ApiExample {
+public class YoutubeAPI {
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+    // Plz replace with your api key
     private static final String API_KEY = "";
 
     /**
@@ -48,12 +40,13 @@ public class ApiExample {
     }
 
     /**
+     * You can use this to test your api token is correct or not
+     *
      * Call function to create API service object. Define and
      * execute API request. Print API response.
-     *
      * @throws GeneralSecurityException, IOException, GoogleJsonResponseException
      */
-    public static void main(String[] args)
+    public static void _main(String[] args)
             throws GeneralSecurityException, IOException, GoogleJsonResponseException {
         YouTube youtubeService = getService();
         // Define and execute the API request
@@ -66,7 +59,7 @@ public class ApiExample {
     /**
      * @param ids
      * @param parts
-     * @return
+     * @return VideoListResponse
      * @example
      * ids: ["Ks-_Mh1QhMc,c0KYU2j0TM4,eIho2S0ZahI"]
      */
