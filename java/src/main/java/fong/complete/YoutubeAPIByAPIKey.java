@@ -1,4 +1,4 @@
-package fong.refactor;
+package fong.complete;
 
 /**
  * Sample Java code for youtube.videos.list
@@ -39,24 +39,13 @@ public class YoutubeAPIByAPIKey {
     }
 
     /**
-     * You can use this to test your api token is correct or not
+     * How to use
      * <p>
-     * Call function to create API service object. Define and
-     * execute API request. Print API response.
+     * YoutubeAPIByOauth.requestVideoList(
+     *      new string[] {"c0KYU2j0TM4"},
+     *      new String[] {"snippet", "contentDetails", "statistics"}
+     * );
      *
-     * @throws GeneralSecurityException, IOException, GoogleJsonResponseException
-     */
-    public static void _main(String[] args)
-            throws GeneralSecurityException, IOException, GoogleJsonResponseException {
-        YouTube youtubeService = getService();
-        // Define and execute the API request
-        YouTube.Videos.List request = youtubeService.videos()
-                .list("snippet,contentDetails,statistics");
-        VideoListResponse response = request.setId("Ks-_Mh1QhMc,c0KYU2j0TM4,eIho2S0ZahI").execute();
-        System.out.println(response);
-    }
-
-    /**
      * @param ids
      * @param parts
      * @return VideoListResponse

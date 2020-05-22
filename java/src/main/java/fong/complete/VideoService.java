@@ -1,4 +1,4 @@
-package fong.refactor;
+package fong.complete;
 
 
 import com.google.api.services.youtube.model.Video;
@@ -33,8 +33,8 @@ class VideoService {
         // You can choose using Oauth2 or api token, the main difference is that
         // Oauth open a web page to gain your google account authorization.
         VideoListResponse listResponse =
-//                OauthExample.requestVideoList(ids, new String[]{"snippet", "contentDetails", "statistics"});
-                YoutubeAPIByAPIKey.requestVideoList(ids, new String[]{"snippet", "contentDetails", "statistics"});
+                YoutubeAPIByOauth.requestVideoList(ids, new String[]{"snippet", "contentDetails", "statistics"});
+//                YoutubeAPIByAPIKey.requestVideoList(ids, new String[]{"snippet", "contentDetails", "statistics"});
 
 
         for (String id : ids) {

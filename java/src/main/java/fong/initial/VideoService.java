@@ -1,4 +1,4 @@
-package fong.refactor;
+package fong.initial;
 
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -28,7 +28,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
 
-class VideoServiceByOauth {
+class VideoService {
     private static final Collection<String> SCOPES =
             Arrays.asList("https://www.googleapis.com/auth/youtube.readonly");
 
@@ -44,7 +44,7 @@ class VideoServiceByOauth {
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
     public static void main(String args[]) {
-        VideoServiceByOauth videoService = new VideoServiceByOauth();
+        VideoService videoService = new VideoService();
         String statistic = videoService.videoList();
         System.out.println(statistic);
     }
