@@ -17,6 +17,7 @@ import com.google.api.services.youtube.model.VideoListResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,6 +34,8 @@ class VideoServiceByOauth {
 
     // Plz replace with your own secret file
     private static final String CLIENT_SECRETS_RESOURCE_NAME = "client_secret.json"; // credential downloaded from google api oauth page
+    // Plz replace with your desired dir location
+    private static final String REFRESH_TOKEN_DATA_STORE_DIR = System.getProperty("user.home") + "/google-refresh-token";
     // Plz replace with your own application name
     private static final String APPLICATION_NAME = "Youtube API Demo"; // created from google api page
     // Plz replace with your whitelisted redirect address port
@@ -115,13 +118,28 @@ class VideoServiceByOauth {
         return videoList.toString();
     }
 
+    /**
+     * Get the credential (api access token) from google server. You will be asked for logging in browser the first time
+     * you request for the token.
+     * After you log in, the google server will return an authorization code for you to exchange for an access token and
+     * a refresh token.
+     * After gaining the access token and the refresh token, the application will store the refresh token for future use and use the access token to access a Google API. Once
+     * the access token expires, the application uses the refresh token to obtain a new one.
+     *
+     * @param secretResourceName
+     * @return Auth Flow: https://developers.google.com/identity/protocols/oauth2#expiration
+     * Example: https://github.com/googleapis/google-oauth-java-client/blob/6447917c657a5ae4267afbab74dfdb890bbfbf28
+     * /samples/dailymotion-cmdline-sample/src/main/java/com/google/api/services/samples/dailymotion/cmdline/DailyMotionSample.java#L72
+     */
     public Credential authorize(String secretResourceName) {
         final NetHttpTransport httpTransport;
         try {
             httpTransport = GoogleNetHttpTransport.newTrustedTransport();
             InputStream in = ClassLoader.getSystemResourceAsStream(secretResourceName);
 
-            FileDataStoreFactory DATA_STORE_FACTORY;
+
+            File DATA_STORE_DIR = new File(REFRESH_TOKEN_DATA_STORE_DIR);
+            FileDataStoreFactory DATA_STORE_FACTORY = new FileDataStoreFactory(DATA_STORE_DIR);
 
             GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
@@ -130,6 +148,7 @@ class VideoServiceByOauth {
                             // Sets the access type ("online" to request online access or "offline" to request offline access) or null for the default behavior ("online" for web applications and "offline" for installed applications).
                             // to get a long-lived refresh token
                             .setAccessType("offline")
+                            .setDataStoreFactory(DATA_STORE_FACTORY)
                             .build();
             LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(ALLOWED_REDIRECT_ADDRESS_PORT).build();
             return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
