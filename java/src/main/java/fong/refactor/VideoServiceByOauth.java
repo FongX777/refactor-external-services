@@ -10,6 +10,7 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
@@ -24,11 +25,7 @@ import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 class VideoServiceByOauth {
     private static final Collection<String> SCOPES =
@@ -52,12 +49,20 @@ class VideoServiceByOauth {
     public String videoList() {
         String resourceName = "videos.json";
 
-        List<JSONObject> videoList =
-                (new JSONArray(this.readSystemResource(resourceName))).toList().stream().map(object -> new JSONObject((Map) object)).collect(Collectors.toList());
+        JSONArray videoJSONArray = new JSONArray(this.readSystemResource(resourceName));
+        List<JSONObject> videoList = new ArrayList<JSONObject>();
+        for (Object obj : videoJSONArray.toList()) {
+            videoList.add(new JSONObject((Map) obj));
+        }
 
-        String[] ids = videoList.stream().map(s -> s.getString("youtubeID")).toArray(String[]::new);
 
-        Credential credential = this.getGoogleCredential(CLIENT_SECRETS_RESOURCE_NAME);
+        String[] ids = new String[videoList.size()];
+        for (int i = 0; i < videoList.size(); i++) {
+            ids[i] = videoList.get(i).getString("youtubeID");
+        }
+
+
+        Credential credential = this.authorize(CLIENT_SECRETS_RESOURCE_NAME);
         YouTube youtubeService = getYoutubeService(credential);
         VideoListResponse listResponse = null;
         try {
@@ -71,14 +76,28 @@ class VideoServiceByOauth {
 
 
         for (String id : ids) {
-            JSONObject video =
-                    videoList.stream().filter(v -> v.getString("youtubeID").equals(id)).findFirst().orElse(null);
-            Video youtubeRecord =
-                    listResponse
-                            .getItems()
-                            .stream()
-                            .filter(record -> record.getId().equals(id))
-                            .findFirst().orElse(null);
+
+            JSONObject video = null;
+            for (JSONObject each : videoList) {
+                if (each.getString("youtubeID").equals(id)) {
+                    video = each;
+                    break;
+                }
+            }
+            if (video == null) {
+                continue;
+            }
+
+            Video youtubeRecord = null;
+            for (Video each : listResponse.getItems()) {
+                if (each.getId().equals(id)) {
+                    youtubeRecord = each;
+                    break;
+                }
+            }
+            if (youtubeRecord == null) {
+                continue;
+            }
 
 
             int views = youtubeRecord.getStatistics().getViewCount().intValue();
@@ -96,20 +115,24 @@ class VideoServiceByOauth {
         return videoList.toString();
     }
 
-    public Credential getGoogleCredential(String secretResourceName) {
+    public Credential authorize(String secretResourceName) {
         final NetHttpTransport httpTransport;
         try {
             httpTransport = GoogleNetHttpTransport.newTrustedTransport();
             InputStream in = ClassLoader.getSystemResourceAsStream(secretResourceName);
-            GoogleClientSecrets clientSecrets = null;
-            clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+
+            FileDataStoreFactory DATA_STORE_FACTORY;
+
+            GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+
             GoogleAuthorizationCodeFlow flow =
                     new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
+                            // Sets the access type ("online" to request online access or "offline" to request offline access) or null for the default behavior ("online" for web applications and "offline" for installed applications).
+                            // to get a long-lived refresh token
                             .setAccessType("offline")
                             .build();
-            Credential credential =
-                    new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver.Builder().setPort(ALLOWED_REDIRECT_ADDRESS_PORT).build()).authorize("user");
-            return credential;
+            LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(ALLOWED_REDIRECT_ADDRESS_PORT).build();
+            return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
         } catch (IOException e) {
