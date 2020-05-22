@@ -36,7 +36,6 @@ class VideoService {
                 YoutubeAPIByOauth.requestVideoList(ids, new String[]{"snippet", "contentDetails", "statistics"});
 //                YoutubeAPIByAPIKey.requestVideoList(ids, new String[]{"snippet", "contentDetails", "statistics"});
 
-
         for (String id : ids) {
             JSONObject video =
                     videoList.stream().filter(v -> v.getString("youtubeID").equals(id)).findFirst().orElse(null);
