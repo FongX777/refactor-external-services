@@ -73,20 +73,6 @@ public class YoutubeAPIByOauth {
     }
 
     /**
-     * Build and return an authorized API client service.
-     *
-     * @return an authorized API client service
-     * @throws GeneralSecurityException, IOException
-     */
-    public static YouTube getService() throws GeneralSecurityException, IOException {
-        final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        Credential credential = authorize(httpTransport);
-        return new YouTube.Builder(httpTransport, JSON_FACTORY, credential)
-                .setApplicationName(APPLICATION_NAME)
-                .build();
-    }
-
-    /**
      * You can use it to test your configuration.
      * <p>
      * Call function to create API service object. Define and
@@ -96,7 +82,30 @@ public class YoutubeAPIByOauth {
      */
     public static void _main(String[] args)
             throws GeneralSecurityException, IOException, GoogleJsonResponseException {
-        YouTube youtubeService = getService();
+        final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        // Load client secrets.
+        // Fix:
+        // https://stackoverflow.com/questions/793213/getting-the-inputstream-from-a-classpath-resource-xml-file
+        InputStream in = ClassLoader.getSystemResourceAsStream(CLIENT_SECRETS);
+        if (in == null) {
+            throw new FileNotFoundException("Resource not found: " + CLIENT_SECRETS);
+        }
+
+        GoogleClientSecrets clientSecrets =
+                GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+        // Build flow and trigger user authorization request.
+        GoogleAuthorizationCodeFlow flow =
+                new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
+                        .setAccessType("offline")
+                        .build();
+        // Fix: redirect_uri_mismatch
+        // https://stackoverflow.com/questions/39263102/how-to-set-redirect-uri-for-oauth2-for-google-in-java
+        Credential credential1 =
+                new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver.Builder().setPort(ALLOWED_REDIRECT_ADDRESS_PORT).build()).authorize("user");
+        Credential credential = credential1;
+        YouTube youtubeService = new YouTube.Builder(httpTransport, JSON_FACTORY, credential)
+                .setApplicationName(APPLICATION_NAME)
+                .build();
         // Define and execute the API request
         YouTube.Videos.List request = youtubeService.videos()
                 .list("snippet,contentDetails,statistics");
@@ -107,7 +116,30 @@ public class YoutubeAPIByOauth {
     static public VideoListResponse requestVideoList(String[] ids, String parts[]) {
         YouTube youtubeService = null;
         try {
-            youtubeService = getService();
+            final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+            // Load client secrets.
+            // Fix:
+            // https://stackoverflow.com/questions/793213/getting-the-inputstream-from-a-classpath-resource-xml-file
+            InputStream in = ClassLoader.getSystemResourceAsStream(CLIENT_SECRETS);
+            if (in == null) {
+                throw new FileNotFoundException("Resource not found: " + CLIENT_SECRETS);
+            }
+
+            GoogleClientSecrets clientSecrets =
+                    GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+            // Build flow and trigger user authorization request.
+            GoogleAuthorizationCodeFlow flow =
+                    new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
+                            .setAccessType("offline")
+                            .build();
+            // Fix: redirect_uri_mismatch
+            // https://stackoverflow.com/questions/39263102/how-to-set-redirect-uri-for-oauth2-for-google-in-java
+            Credential credential1 =
+                    new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver.Builder().setPort(ALLOWED_REDIRECT_ADDRESS_PORT).build()).authorize("user");
+            Credential credential = credential1;
+            youtubeService = new YouTube.Builder(httpTransport, JSON_FACTORY, credential)
+                    .setApplicationName(APPLICATION_NAME)
+                    .build();
             // Define and execute the API request
             YouTube.Videos.List request = youtubeService.videos()
                     .list(String.join(",", parts));

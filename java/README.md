@@ -109,3 +109,7 @@ Maven Usage:
 ## Reference
 
 * Youtube Data API: https://developers.google.com/youtube/v3/docs/videos/list (try the code generator)
+* How to calculate days between two dates: https://mkyong.com/java8/java-8-difference-between-two-localdate-or-localdatetime/
+* Google & Youtube API Usage
+    * https://developers.google.com/youtube/v3/docs/videos/list?hl=zh-tw&apix_params=%7B%22part%22%3A%22snippet%2CcontentDetails%2Cstatistics%22%2C%22id%22%3A%22Ks-_Mh1QhMc%2Cc0KYU2j0TM4%2CeIho2S0ZahI%22%7D&apix=true
+    * https://developers.google.com/people/quickstart/java
